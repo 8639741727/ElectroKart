@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Today's Deals — ElectroKart</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Adobe Launch embed goes here — see index.html for details -->
+</head>
+<body>
+  <div class="app-shell">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="index.html" class="brand" aria-label="ElectroKart home">
+          <span class="brand-mark">🛒</span>
+          <span class="brand-name">ElectroKart</span>
+        </a>
+        <nav class="main-nav" aria-label="Primary">
+          <a href="products.html" class="nav-link">All Products</a>
+          <a href="deals.html" class="nav-link active">Today's Deals</a>
+          <a href="products.html?category=mobiles" class="nav-link">Mobiles</a>
+          <a href="products.html?category=audio" class="nav-link">Audio</a>
+          <a href="products.html?category=computing" class="nav-link">Computing</a>
+        </nav>
+        <form class="search-form" id="searchForm" role="search">
+          <input type="search" name="q" placeholder="Search products, brands and more…" aria-label="Search products" />
+        </form>
+        <div class="header-actions">
+          <div id="accountArea"></div>
+          <a href="orders.html" class="nav-icon-link">Orders</a>
+          <a href="wishlist.html" class="cart-link" aria-label="Wishlist">
+            Wishlist
+            <span class="cart-badge hidden" id="wishlistBadge">0</span>
+          </a>
+          <a href="cart.html" class="cart-link" aria-label="Cart">
+            Cart
+            <span class="cart-badge hidden" id="cartBadge">0</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="container page-section">
+        <span class="eyebrow">Limited time</span>
+        <h1>Today's Deals</h1>
+        <p class="muted" id="dealsCount"></p>
+
+        <div class="grid grid-4" id="dealsGrid" style="margin-top:24px;"></div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <span class="brand-mark">🛒</span> ElectroKart
+          <p class="muted footer-blurb">
+            Electronics that hold up under real use. Built as a demo storefront for
+            Adobe Target proof-of-concept work — not a real store.
+          </p>
+        </div>
+        <div class="footer-cols">
+          <div>
+            <h3 class="footer-heading">Shop</h3>
+            <a href="products.html">All products</a>
+            <a href="deals.html">Today's deals</a>
+            <a href="products.html?category=mobiles">Mobiles &amp; tablets</a>
+            <a href="products.html?category=audio">Audio</a>
+          </div>
+          <div>
+            <h3 class="footer-heading">Account</h3>
+            <a href="login.html">Log in</a>
+            <a href="signup.html">Create account</a>
+            <a href="orders.html">My orders</a>
+            <a href="wishlist.html">Wishlist</a>
+            <a href="cart.html">Cart</a>
+          </div>
+          <div>
+            <h3 class="footer-heading">Info</h3>
+            <a href="admin.html">Visitor log (demo)</a>
+            <span class="muted">Demo storefront</span>
+            <span class="muted">No real payments processed</span>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <p class="muted footer-legal">© 2026 ElectroKart — sample site for testing, not a live store.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="js/common.js"></script>
+  <script type="module" src="js/deals-page.js"></script>
+</body>
+</html>
