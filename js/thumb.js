@@ -18,7 +18,7 @@ export function productThumbHTML(product, sizePct = 100) {
   const discountBadge =
     product.discountPct > 0 ? `<span class="thumb-discount">-${product.discountPct}%</span>` : "";
   return `
-    <div class="product-thumb" style="background: linear-gradient(155deg, ${product.color}, #0f1115);">
+    <div class="product-thumb" style="background: linear-gradient(155deg, ${product.color}, var(--surface-2));">
       <svg viewBox="0 0 100 100" width="${sizePct}%" height="${sizePct}%" aria-hidden="true">
         <defs>
           <linearGradient id="${gradId}" x1="0" y1="0" x2="1" y2="1">

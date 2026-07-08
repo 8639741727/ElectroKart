@@ -1020,7 +1020,7 @@ main {
   border-radius: 50%;
   border: 1px solid var(--border);
   background: rgba(15, 17, 21, 0.75);
-  color: var(--text);
+  color: #f0f0f0;
   font-size: 1.1rem;
   line-height: 1;
   display: flex;
@@ -1031,8 +1031,8 @@ main {
 }
 
 .wishlist-toggle.active {
-  color: var(--copper);
-  border-color: var(--copper);
+  color: #ff9500;
+  border-color: #ff9500;
 }
 
 .wishlist-toggle:hover {
