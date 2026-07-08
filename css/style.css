@@ -1,16 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 
 :root {
-  --bg: #0f1115;
-  --surface: #1a1d23;
-  --surface-2: #21252c;
-  --border: #2a2e37;
-  --text: #e8e9ed;
-  --text-muted: #8a8f98;
-  --accent: #00c97b;
-  --accent-dim: #0a5c3d;
-  --copper: #ff9500;
-  --danger: #ff5c5c;
+  --bg: #f6f7f8;
+  --surface: #ffffff;
+  --surface-2: #eef1f4;
+  --border: #dde2e8;
+  --text: #14171c;
+  --text-muted: #5b6270;
+  --accent: #04875a;
+  --accent-dim: #d1f3e4;
+  --copper: #b25e00;
+  --danger: #c53434;
   --font-display: "Space Mono", monospace;
   --font-body: "Inter", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
@@ -74,7 +74,6 @@ h3 {
   font-size: 1.6rem;
   font-weight: 600;
   color: var(--copper);
-  text-shadow: 0 0 18px rgba(255, 149, 0, 0.25);
 }
 
 .eyebrow {
@@ -242,7 +241,7 @@ main {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(15, 17, 21, 0.92);
+  background: rgba(246, 247, 248, 0.92);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
 }
