@@ -52,6 +52,15 @@ export function getProfileParams() {
 export function sendPageView(pageName, extra = {}) {
   const payload = { pageName, ...getProfileParams(), ...extra };
   recordVisit(pageName, extra);
+
+  pushToDataLayer({
+    page: { pageName, pageType: extra.pageType || null },
+    user: {
+      isLoggedIn: extra.isLoggedIn ?? null,
+      lastViewedCategory: extra.category || null,
+    },
+  });
+
   if (hasAlloy()) {
     window.alloy("sendEvent", {
       type: "web.webpagedetails.pageViews",
@@ -64,6 +73,20 @@ export function sendPageView(pageName, extra = {}) {
 
 export function sendProductView(product) {
   const payload = { entityId: product.id, category: product.category, ...getProfileParams() };
+
+  pushToDataLayer({
+    product: {
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      subCategory: product.subCategory || null,
+      basePrice: product.price,
+      thumbnailUrl: product.thumbnailUrl || null,
+      relativeUrl: product.relativeUrl || null,
+    },
+    category: { id: product.category, name: product.categoryName || null },
+  });
+
   if (hasAlloy()) {
     window.alloy("sendEvent", {
       type: "commerce.productViews",
@@ -81,6 +104,11 @@ export function sendProductView(product) {
 export function sendCartUpdate(cart) {
   const cartValue = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const payload = { MyCart: cart.map((i) => i.id).join(","), cartValue: +cartValue.toFixed(2) };
+
+  pushToDataLayer({
+    cart: { value: +cartValue.toFixed(2), itemCount: cart.reduce((n, i) => n + i.qty, 0) },
+  });
+
   if (hasAlloy()) {
     window.alloy("sendEvent", {
       type: "commerce.productListAdds",
@@ -97,6 +125,11 @@ export function sendCartUpdate(cart) {
 export function sendPurchase(cart, orderId) {
   const cartValue = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const payload = { orderId, orderTotal: +cartValue.toFixed(2) };
+
+  pushToDataLayer({
+    order: { id: orderId, total: +cartValue.toFixed(2) },
+  });
+
   if (hasAlloy()) {
     window.alloy("sendEvent", {
       type: "commerce.purchases",
@@ -117,7 +150,7 @@ if (typeof window !== "undefined") {
 }
 
 
-function pushToDataLayer(overrides) {
+export function pushToDataLayer(overrides) {
   const defaultData = {
     page: {
       pageName: null,
