@@ -115,3 +115,47 @@ export function sendPurchase(cart, orderId) {
 if (typeof window !== "undefined") {
   window.__ferriteProfile = getProfileParams;
 }
+
+
+function pushToDataLayer(overrides) {
+  const defaultData = {
+    page: {
+      pageName: null,
+      pageType: null
+    },
+    product: {
+      id: null,
+      name: null,
+      category: null,
+      subCategory: null,
+      basePrice: null,
+      thumbnailUrl: null,
+      relativeUrl: null
+    },
+    category: {
+      id: null,
+      name: null
+    },
+    cart: {
+      value: null,
+      itemCount: null
+    },
+    order: {
+      id: null,
+      total: null
+    },
+    user: {
+      isLoggedIn: null,
+      lastViewedCategory: null
+    }
+  };
+
+  // Merge overrides into defaults, section by section
+  const finalData = {};
+  for (const section in defaultData) {
+    finalData[section] = Object.assign({}, defaultData[section], overrides[section] || {});
+  }
+
+  window.MyDataLayer = window.MyDataLayer || [];
+  window.MyDataLayer.push(finalData);
+}
