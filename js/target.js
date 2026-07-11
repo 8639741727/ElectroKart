@@ -23,7 +23,7 @@
  *                         troubleshooting for persistence issues.
  * ------------------------------------------------------------------
  */
-
+import { getCurrentUser } from "./auth.js";
 import { getOrCreateVisitorId, recordVisit } from "./visitors.js";
 
 const hasAlloy = () => typeof window !== "undefined" && typeof window.alloy === "function";
@@ -53,10 +53,13 @@ export function sendPageView(pageName, extra = {}) {
   const payload = { pageName, ...getProfileParams(), ...extra };
   recordVisit(pageName, extra);
 
+  const currentUser = getCurrentUser(); // { name, email } or null
+
   pushToDataLayer({
     page: { pageName, pageType: extra.pageType || null },
     user: {
-      isLoggedIn: extra.isLoggedIn ?? null,
+      isLoggedIn: extra.isLoggedIn ?? (currentUser ? true : false),
+      loginId: currentUser ? currentUser.email : null,
       lastViewedCategory: extra.category || null,
     },
   });
@@ -179,6 +182,7 @@ export function pushToDataLayer(overrides) {
     },
     user: {
       isLoggedIn: null,
+      loginId: null,
       lastViewedCategory: null
     }
   };
