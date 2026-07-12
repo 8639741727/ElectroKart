@@ -22,6 +22,20 @@
  *                         the same two profile parameters you were
  *                         troubleshooting for persistence issues.
  * ------------------------------------------------------------------
+ *
+ * PATCH NOTE (added): pushToDataLayer used to rebuild `user`/`page`/etc.
+ * from scratch on every call, using only that call's own overrides.
+ * Since sendProductView/sendCartUpdate/sendPurchase never pass a `user`
+ * override, any push from those functions silently reset user.loginId
+ * back to null. Because EmailID Capture in Tags always read
+ * MyDataLayer[0], whether login data survived depended on which
+ * function happened to push first — not on timing.
+ *
+ * Fix: keep one persistent, cumulative object (window.MyDataLayerState)
+ * that every push merges ONTO, instead of rebuilding from defaults each
+ * time. window.MyDataLayer (the array) is still pushed to, unchanged,
+ * for anything else on the site that reads it as a history/array.
+ * ------------------------------------------------------------------
  */
 import { getCurrentUser } from "./auth.js";
 import { getOrCreateVisitorId, recordVisit } from "./visitors.js";
@@ -152,47 +166,74 @@ if (typeof window !== "undefined") {
   window.__ferriteProfile = getProfileParams;
 }
 
+/* ------------------------------------------------------------------
+ * PATCHED: pushToDataLayer + the new persistent state object.
+ * This whole block REPLACES the original pushToDataLayer function
+ * (the one that declared `defaultData` and `finalData` inline and did
+ * NOT persist state between calls). Everything else in the file above
+ * this point is unchanged.
+ * ------------------------------------------------------------------ */
+
+// Single persistent object — created once, then merged onto by every
+// pushToDataLayer call. This is what EmailID Capture (and any other
+// data element) should read from going forward, instead of MyDataLayer[0].
+window.MyDataLayerState = window.MyDataLayerState || {
+  page: {
+    pageName: null,
+    pageType: null,
+  },
+  product: {
+    id: null,
+    name: null,
+    category: null,
+    subCategory: null,
+    basePrice: null,
+    thumbnailUrl: null,
+    relativeUrl: null,
+  },
+  category: {
+    id: null,
+    name: null,
+  },
+  cart: {
+    value: null,
+    itemCount: null,
+  },
+  order: {
+    id: null,
+    total: null,
+  },
+  user: {
+    isLoggedIn: null,
+    loginId: null,
+    lastViewedCategory: null,
+  },
+};
 
 export function pushToDataLayer(overrides) {
-  const defaultData = {
-    page: {
-      pageName: null,
-      pageType: null
-    },
-    product: {
-      id: null,
-      name: null,
-      category: null,
-      subCategory: null,
-      basePrice: null,
-      thumbnailUrl: null,
-      relativeUrl: null
-    },
-    category: {
-      id: null,
-      name: null
-    },
-    cart: {
-      value: null,
-      itemCount: null
-    },
-    order: {
-      id: null,
-      total: null
-    },
-    user: {
-      isLoggedIn: null,
-      loginId: null,
-      lastViewedCategory: null
-    }
-  };
-
-  // Merge overrides into defaults, section by section
-  const finalData = {};
-  for (const section in defaultData) {
-    finalData[section] = Object.assign({}, defaultData[section], overrides[section] || {});
+  // Merge the incoming overrides ONTO the persistent state, section by
+  // section — so a call that only mentions `cart` (e.g. sendCartUpdate)
+  // can never wipe out `user`, `page`, etc. that were set by an earlier call.
+  for (const section in window.MyDataLayerState) {
+    window.MyDataLayerState[section] = Object.assign(
+      {},
+      window.MyDataLayerState[section],
+      overrides[section] || {}
+    );
   }
 
+  // Keep MyDataLayer as an array/history for anything on the site that
+  // already reads it that way — but every entry now carries the FULL
+  // accumulated state, not just that call's partial overrides.
   window.MyDataLayer = window.MyDataLayer || [];
-  window.MyDataLayer.push(finalData);
+  window.MyDataLayer.push(window.MyDataLayerState);
+
+  // Let Tags react to real data-readiness instead of guessing page-lifecycle
+  // timing (DOM Ready, Library Loaded, etc.). Use this as the rule's trigger:
+  // Core extension -> Custom Event -> "electrokart:dataLayerUpdated"
+  window.dispatchEvent(
+    new CustomEvent("electrokart:dataLayerUpdated", {
+      detail: window.MyDataLayerState,
+    })
+  );
 }
